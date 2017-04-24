@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+
+  "name": "Overdrive Book Search",
+  "description": "Searches overdrive for an Amazon book title.",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html",
+    "default_title": "Overdrive Search"
+  },
+  
+  "permissions": [
+    "activeTab",
+    "https://nypl.overdrive.com/"
+  ],
+  
+  "content_scripts": [
+    {
+      "matches": ["https://www.amazon.com/*"],
+      "js": ["nyplcontent.js"]
+    }
+  ]
+}
