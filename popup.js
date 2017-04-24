@@ -88,12 +88,20 @@ function getImageUrl(searchTerm, callback, errorCallback) {
   x.send();
 }
 
+function slugify(text)
+{
+  return text.toString().toLowerCase().replace(/\s+/g, '+')           // Replace spaces with +
+}
+
 function renderStatus(statusText) {
   document.getElementById('status').textContent = statusText;
 }
 
-function setLink(text) {
-  document.getElementById('overdrivelink').textContent = text;
+function setLink(obj) {
+  var linkElement = document.getElementById('overdrivelink')
+  linkElement.textContent = 'Search overdrive for ' + obj.title + ' by ' + obj.author;
+  linkElement.href = 'https://nypl.overdrive.com/search?query=' + slugify(obj.title + ' ' + obj.author);
+  //linkElement.href = 'https://nypl.overdrive.com/search?query=the+expats+chris+pavone';
 }
 
 function getBookTitles(html) {
@@ -111,9 +119,9 @@ function getBookTitles(html) {
   return ret
 }
 
-function sendmessage() {
+function getBookDetails() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
+    chrome.tabs.sendMessage(tabs[0].id, {greeting: "getAuthorAndTitle"}, function(response) {
       console.log('response received!', response);
       setLink(response)
     });
@@ -124,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('starting...')
   var titles = ['author 1 - title 1', 'author 2 - title 2', 'author 3 - title 3', 'author 4 - title 4', ]
   var bookList = document.getElementById('booklist')
-  sendmessage();
+  getBookDetails();
   titles.forEach(function(item, index, array) {
     console.log('adding title ', item);      
     var node = document.createElement("LI");
