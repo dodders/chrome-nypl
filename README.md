@@ -1,10 +1,7 @@
 # chrome-nypl
 Chrome Extension to search ebooks on NYPL Overdrive
 
-Clicking on the extension icon will display the books on NYPL Overdrive that match the author and title from the current tab displaying an Amazon kindle book.
+The extension will display a link to search NYPL Overdrive if it finds books that match the author and title from the current tab displaying an Amazon kindle book.
 
-Todo:
-
-- Handle non-kindle titles.
-- Change script to display the Overdrive titles in the amazon page rather than on the extension popup.
+The extension adds a link to the Amazon book page underneath the book title. It queries the Overdrive page for matches using HTTPS GET.
 
