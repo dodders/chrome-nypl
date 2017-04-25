@@ -19,7 +19,7 @@
   "content_scripts": [
     {
       "matches": ["https://www.amazon.com/*"],
-      "js": ["nyplcontent.js", "nypl2.js"]
+      "js": ["nypl2.js"]
     }
   ]
 }
