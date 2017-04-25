@@ -1,8 +1,11 @@
-var ebooktitle = document.getElementById('ebooksProductTitle').innerText
+var papertitle = document.getElementById('productTitle')
+var etitle = document.getElementById('ebooksProductTitle')
+var titleelement = papertitle == null ? etitle : papertitle
+var booktitle = titleelement.innerText;
 var authors = document.getElementsByClassName('contributorNameID')[0].innerText
 
-var ret = {title: ebooktitle, author: authors}
-console.log('hi there from nyplcontent. found: ', ret)
+var ret = {title: booktitle, author: authors}
+console.log('nyplcontent found: ', ret)
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
