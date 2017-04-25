@@ -8,7 +8,9 @@ function slugify(text) {
 
 function main() {
     var book = getBook();
-    queryOverride(book);
+    if (book != false) {
+        queryOverride(book)
+    }
 }
 
 function insertOverDriveFail() {
@@ -37,13 +39,17 @@ function insertOverDriveLink(book) {
 }
 
 function getBook() {
-    var papertitle = document.getElementById('productTitle')
-    var etitle = document.getElementById('ebooksProductTitle')
-    var titleelement = papertitle == null ? etitle : papertitle
-    var booktitle = titleelement.innerText;
-    var authors = document.getElementsByClassName('contributorNameID')[0].innerText
-    var ret = {title: booktitle, author: authors}
-    return ret;    
+    try {
+        var papertitle = document.getElementById('productTitle')
+        var etitle = document.getElementById('ebooksProductTitle')
+        var titleelement = papertitle == null ? etitle : papertitle
+        var booktitle = titleelement.innerText;
+        var authors = document.getElementsByClassName('contributorNameID')[0].innerText
+        var ret = {title: booktitle, author: authors}
+        return ret;            
+    } catch(err) {
+        return false;
+    }
 }
 
 function queryOverride(book) {
