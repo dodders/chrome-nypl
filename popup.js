@@ -97,13 +97,6 @@ function renderStatus(statusText) {
   document.getElementById('status').textContent = statusText;
 }
 
-function setLink(obj) {
-  var linkElement = document.getElementById('overdrivelink')
-  linkElement.textContent = 'Search overdrive for ' + obj.title + ' by ' + obj.author;
-  linkElement.href = 'https://nypl.overdrive.com/search?query=' + slugify(obj.title + ' ' + obj.author);
-  //linkElement.href = 'https://nypl.overdrive.com/search?query=the+expats+chris+pavone';
-}
-
 function getBookTitles(html) {
   const startText = 'window.OverDrive.titleCollection'
   var start = html.indexOf(startText)
@@ -119,28 +112,65 @@ function getBookTitles(html) {
   return ret
 }
 
-function getBookDetails() {
+function getBookDetailsFromAmazon() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, {greeting: "getAuthorAndTitle"}, function(response) {
       console.log('response received!', response);
-      setLink(response)
+      queryOverride(response)
     });
   });
 }
 
+function queryOverride(book) {
+  var searchUrl = 'https://nypl.overdrive.com/search?query=';
+  searchUrl += slugify(book.author + ' ' + book.title);
+  var x = new XMLHttpRequest();
+  x.open('GET', searchUrl);
+  x.onload = function() {
+    var titles = getBookTitles(x.responseText)
+    var bookList = document.getElementById('booklist')
+    titles.forEach(function(item, index, array) {
+      console.log('adding title ', item);
+      var node = document.createElement("LI");
+      var text = document.createTextNode(item);
+      node.appendChild(text);
+      bookList.appendChild(node);
+      })
+    var linkElement = document.getElementById('overdrivelink')
+    linkElement.textContent = 'Search overdrive for ' + book.title + ' by ' + book.author;
+    linkElement.href = searchUrl;
+    disableStatus();
+  }
+  x.send();
+}
+
+function disableStatus() {
+  document.getElementById('status').hidden = true; 
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('starting...')
+  renderStatus('retrieving details...');
+  getBookDetailsFromAmazon();
+})
+
+/*document.addEventListener('DOMContentLoaded', function() {
+  console.log('starting...')
+  renderStatus('retrieving details...');
+  getBookDetailsFromAmazon();
   var titles = ['author 1 - title 1', 'author 2 - title 2', 'author 3 - title 3', 'author 4 - title 4', ]
   var bookList = document.getElementById('booklist')
   getBookDetails();
   titles.forEach(function(item, index, array) {
-    console.log('adding title ', item);      
+    console.log('adding title ', item);
     var node = document.createElement("LI");
     var text = document.createTextNode(item);
     node.appendChild(text);
     bookList.appendChild(node);
     })
- })
+ })*/
+
+
 
 /* get title and author! */
 //document.getElementById('ebooksProductTitle')
@@ -158,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var titles = getBookTitles(x.responseText)
     var bookList = document.getElementById('booklist')
     titles.forEach(function(item, index, array) {
-      console.log('adding title ', item);      
+      console.log('adding title ', item);
       var node = document.createElement("LI");
       var text = document.createTextNode(item);
       node.appendChild(text);
