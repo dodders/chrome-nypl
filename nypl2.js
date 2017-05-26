@@ -9,8 +9,11 @@ function slugify(text) {
 function main() {
     var book = getBook();
     if (book != false) {
+		console.log('found book: ', book.title)
         queryOverride(book)
-    }
+    } else {
+		console.log('couldn\'t find book details.')
+	}
 }
 
 function insertOverDriveFail() {
@@ -44,8 +47,13 @@ function getBook() {
         var etitle = document.getElementById('ebooksProductTitle')
         var titleelement = papertitle == null ? etitle : papertitle
         var booktitle = titleelement.innerText;
-        var authors = document.getElementsByClassName('contributorNameID')[0].innerText
+		try {
+        	var author1 = document.getElementsByClassName('contributorNameID')[0].innerText
+        	var author2 = document.getElementsByClassName('author')[0].innerText
+			var authors = author1 == null ? author2 : author1
+		} catch(err) {}
         var ret = {title: booktitle, author: authors}
+		console.log('found book with title ', booktitle, ' and author ', authors)
         return ret;            
     } catch(err) {
         return false;
@@ -58,14 +66,18 @@ function queryOverride(book) {
   var x = new XMLHttpRequest();
   x.open('GET', searchUrl);
   x.onload = function() {
+	console.log('overdrive page returned.')
     try {
         var titles = getBookTitles(x.responseText)
         if (titles.length > 0) {
+			console.log('title found in overdrive page! inserting...')
             insertOverDriveLink(book)
         } else {
+			console.log('overdrive page doesn\'t contain a title.')
             insertOverDriveFail();
         }
     } catch(err) {
+		console.log('general error: ', err)
         insertOverDriveFail();
     }
   }
