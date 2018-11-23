@@ -63,6 +63,7 @@ function getBook() {
 function queryOverride(book) {
   var searchUrl = 'https://nypl.overdrive.com/search?query=';
   searchUrl += slugify(book.author + ' ' + book.title);
+  console.log('searching ', searchUrl)
   var x = new XMLHttpRequest();
   x.open('GET', searchUrl);
   x.onload = function() {
@@ -88,7 +89,7 @@ function getBookTitles(html) {
   const startText = 'window.OverDrive.titleCollection'
   var start = html.indexOf(startText)
   var rest = html.slice(start + startText.length + 3, -1)
-  var end = rest.indexOf('}]')
+  var end = rest.indexOf('}];')
   var titles = rest.slice(0, end + 2)
   var json = JSON.parse(titles)
   var ret = []
